@@ -1,0 +1,37 @@
+version: "3.3"
+
+networks:
+  app-network:
+
+volumes:
+  dir-site:
+
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: mgw-app:lastest
+    container_name: app
+    ports:
+      - ${NODE_DEV_PORT}:${PORT}
+    env_file: .env
+    depends_on:
+      - db
+    networks:
+      - app-network
+  db:
+    image: postgres:10.16
+    environment:
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DATABASE}"
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    volumes:
+      - dir-site:/var/lib/postgresql/data
+    networks:
+      - app-network
+    expose:
+      - "${DB_PORT}"
+    command: -p ${DB_PORT}
