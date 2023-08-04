@@ -1,14 +1,12 @@
 import { Router } from "express";
-import { authentication } from "../middlewares/auth.middleware";
 import * as authController from "../controllers/auth.controller";
-import { AppError } from "../models/http-exception.model";
+import { authentication } from "../middlewares/auth.middleware";
 
 const authRouter = Router();
 
-authRouter.post("/login");
-authRouter.get("/logout", (req: any, res: any, next: any) => {
-  throw new AppError({ httpCode: 400, message: "had error" });
-});
-authRouter.get("/self-info", authentication, authController.getSelfInfo);
+authRouter.post("/auth/register", authController.register);
+authRouter.post("/auth/login", authController.login);
+authRouter.get("/auth/logout", authController.logout);
+authRouter.get("/auth/self-info", authentication, authController.getSelfInfo);
 
 export default authRouter;

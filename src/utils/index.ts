@@ -1,10 +1,19 @@
-import { RegisterInput } from "models/auth.model";
+import { AppError, HttpCode } from "models/http-exception.model";
 
-const checkDuplicateUser = async (user: RegisterInput) => {
-  const { email, userName } = user;
-  const _user = await prisma?.user.findUnique({
-    where: {
-      email,
-    },
+export function capitalizeFirstLetter(text: string) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+export const handleEmptyKeyObject = (data: object) => {
+  let error = false;
+  Object.entries(data).forEach(([key, value]) => {
+    if (!value) {
+      error = true;
+      throw new AppError({
+        httpCode: HttpCode.BAD_REQUEST,
+        message: `${capitalizeFirstLetter(key)} is can't blank!`,
+      });
+    }
   });
+  return error;
 };

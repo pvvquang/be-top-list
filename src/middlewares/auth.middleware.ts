@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-export const authentication = async (req: Request, res: Response, next: NextFunction) => {
+export const authentication = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const bearer = req.headers.authorization;
 
   if (!bearer) {
@@ -17,7 +21,7 @@ export const authentication = async (req: Request, res: Response, next: NextFunc
   }
 
   try {
-    const user = jwt.verify(token, process.env.JWT_SECRET || "superSecret");
+    const user = jwt.verify(token, process.env.JWT_SECRET_KEY || "superSecret");
     console.log(user);
     req.user = user;
     next();
