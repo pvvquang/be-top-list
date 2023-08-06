@@ -1,8 +1,12 @@
-export interface RegisterInput {
+export interface LoginInput {
   email: string;
   password: string;
+}
+
+export interface RegisterInput extends LoginInput {
   userName: string;
 }
+
 export interface User {
   id: string;
   email: string;
@@ -20,6 +24,7 @@ export interface AccessToken {
   createdAt: Date;
   updatedAt: Date;
 }
+
 export interface RefreshToken {
   id: number;
   userId: string;
