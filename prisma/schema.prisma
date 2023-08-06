@@ -15,6 +15,7 @@ model User {
   email        String         @unique @db.VarChar(255)
   password     String         @db.VarChar(255)
   userName     String         @db.VarChar(255)
+  active       Boolean        @default(true) @db.Boolean
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   AccessToken  AccessToken[]
@@ -27,6 +28,7 @@ model AccessToken {
   userId    String   @db.VarChar(255)
   token     String   @db.VarChar(255)
   expires   DateTime @db.Date
+  active    Boolean  @default(true) @db.Boolean
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -38,6 +40,7 @@ model RefreshToken {
   token           String   @db.VarChar(255)
   expires         DateTime @db.Date
   replacedByToken String   @db.VarChar(255)
+  active          Boolean  @default(true) @db.Boolean
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
