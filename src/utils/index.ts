@@ -17,3 +17,16 @@ export const handleEmptyKeyObject = (data: object) => {
   });
   return error;
 };
+
+export const checkCategoryExists = async (categoryName: string) => {
+  const category = await prisma?.categories.findFirst({
+    where: { categoryName },
+  });
+
+  if (category) {
+    throw new AppError({
+      httpCode: HttpCode.BAD_REQUEST,
+      message: "Category name had existed. Please enter another category name!",
+    });
+  }
+};

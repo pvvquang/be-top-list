@@ -44,3 +44,11 @@ model RefreshToken {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
+
+model Categories {
+  id           Int      @id @default(autoincrement())
+  categoryName String   @db.VarChar(255)
+  active       Boolean  @default(true) @db.Boolean
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
