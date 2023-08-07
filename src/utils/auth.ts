@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { AppError, HttpCode } from "models/http-exception.model";
 import jwt from "jsonwebtoken";
 import { AppConstant } from "constants/index";
+import prisma from "configs/db";
 
 const saltRounds = 10;
 const secretKey = process.env.JWT_SECRET_KEY as string;
