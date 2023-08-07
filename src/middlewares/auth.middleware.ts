@@ -22,7 +22,6 @@ export const authentication = async (
 
   try {
     const user = jwt.verify(token, process.env.JWT_SECRET_KEY || "superSecret");
-    console.log(user);
     req.user = user;
     next();
   } catch (err) {

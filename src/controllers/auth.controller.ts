@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { LoginInput, RegisterInput } from "models/auth.model";
+import { LoginInput, RegisterInput, User } from "models/auth.model";
 import { HttpCode } from "models/http-exception.model";
 import * as authService from "services/auth.service";
 
@@ -38,18 +38,16 @@ export const login = async (
   }
 };
 
-export const logout = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const { user } = req;
-};
-
 export const getSelfInfo = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { user } = req;
+  try {
+    const user: User = await authService.getSelfInfo(req.user.data);
+    const { password, ...rest } = user;
+    res.status(HttpCode.OK).json({ ...rest });
+  } catch (e) {
+    next(e);
+  }
 };

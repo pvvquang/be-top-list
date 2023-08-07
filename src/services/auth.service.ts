@@ -72,3 +72,14 @@ export const login = async (user: LoginInput) => {
   }
   return newAccessToken;
 };
+
+export const getSelfInfo = async (userId: string) => {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) {
+    throw new AppError({
+      httpCode: HttpCode.NOT_FOUND,
+      message: "Some thing wrong!. User not found",
+    });
+  }
+  return user;
+};
