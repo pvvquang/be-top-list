@@ -11,4 +11,4 @@ RUN chmod +x /wait
 
 EXPOSE ${PORT}
 
-CMD /wait && yarn dev
+CMD /wait && yarn migrate && yarn start
