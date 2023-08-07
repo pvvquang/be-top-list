@@ -1,9 +1,9 @@
-import { RegisterInput } from "models/auth.model";
 import bcrypt from "bcrypt";
-import { AppError, HttpCode } from "models/http-exception.model";
-import jwt from "jsonwebtoken";
-import { AppConstant } from "constants/index";
 import prisma from "configs/db";
+import { AppConstant } from "constants/index";
+import jwt from "jsonwebtoken";
+import { RegisterInput } from "models/auth.model";
+import { AppError, HttpCode } from "models/http-exception.model";
 
 const saltRounds = 10;
 const secretKey = process.env.JWT_SECRET_KEY as string;
@@ -39,7 +39,7 @@ export const validateEmail = (email: string) => {
 };
 
 export function generateAccessToken(userId: string) {
-  return jwt.sign(userId, secretKey, {
+  return jwt.sign({ data: userId }, secretKey, {
     expiresIn: AppConstant.EXPIRES_TIME,
   });
 }
