@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "build": "rm -rf build && tsc",
+    "build": "rm -rf dist && tsc",
     "dev": "nodemon",
     "start": "node dist/index.js",
     "migrate": "npx prisma generate && npx prisma migrate deploy",
