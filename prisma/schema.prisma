@@ -20,6 +20,7 @@ model User {
   updatedAt    DateTime       @updatedAt
   AccessToken  AccessToken[]
   RefreshToken RefreshToken[]
+  Post         Post[]
 }
 
 model AccessToken {
@@ -51,14 +52,31 @@ model Categories {
   active       Boolean  @default(true) @db.Boolean
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  Post         Post[]
 }
 
 model Media {
   id           Int      @id @default(autoincrement())
   key          String   @unique @db.VarChar(255)
   type         String   @db.VarChar(50)
-  link         String
+  link         String   @unique
   originalName String   @db.VarChar(255)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  Post         Post[]
+}
+
+model Post {
+  id         Int        @id @default(autoincrement())
+  title      String     @db.VarChar(255)
+  slug       String     @unique @db.VarChar(255)
+  content    String
+  User       User       @relation(fields: [userId], references: [id])
+  userId     String
+  category   Categories @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  media      Media      @relation(fields: [thumbnail], references: [link])
+  thumbnail  String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
