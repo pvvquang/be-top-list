@@ -8,3 +8,16 @@ export type Category = CategoryInput & {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export interface MediaInput {
+  key: string;
+  type: string;
+  originalName: string;
+  link: string;
+}
+
+export interface Media extends MediaInput {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+}

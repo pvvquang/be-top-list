@@ -24,7 +24,7 @@ class ErrorHandler {
     }
 
     console.log("Application encountered a critical error. Exiting");
-    console.log("---------error: " + error + "---------------------");
+    console.log("---------error: " + error + "  ---------------------");
     // process.exit(1);
   }
 

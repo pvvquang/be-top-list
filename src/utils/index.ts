@@ -30,3 +30,10 @@ export const checkCategoryExists = async (categoryName: string) => {
     });
   }
 };
+
+export const throw404Error = () => {
+  throw new AppError({
+    httpCode: HttpCode.NOT_FOUND,
+    message: "Not Found!",
+  });
+};
