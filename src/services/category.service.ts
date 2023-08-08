@@ -1,7 +1,7 @@
 import prisma from "configs/db";
 import { CategoryInput } from "models";
 import { AppError, HttpCode } from "models/http-exception.model";
-import { checkCategoryExists } from "utils";
+import { checkCategoryExists, throw404Error } from "utils";
 
 export const createCategory = async (categoryName: string) => {
   await checkCategoryExists(categoryName);
@@ -10,21 +10,13 @@ export const createCategory = async (categoryName: string) => {
 };
 
 export const getCategory = async (categoryId: string) => {
-  checkValidCategoryId(categoryId);
-  const category = await prisma.categories.findFirst({
-    where: { id: +categoryId },
-  });
-  if (!category) {
-    throw new AppError({ httpCode: HttpCode.NOT_FOUND, message: "Not Found!" });
-  }
+  const category = await checkValidCategoryId(categoryId);
   return category;
 };
 
 export const getCategories = async () => {
   const categories = await prisma.categories.findMany();
-  if (!categories) {
-    throw new AppError({ httpCode: HttpCode.NOT_FOUND, message: "Not Found!" });
-  }
+  if (!categories) throw404Error();
   return categories;
 };
 
@@ -32,13 +24,7 @@ export const updateCategory = async (
   category: CategoryInput,
   categoryId: string
 ) => {
-  checkValidCategoryId(categoryId);
-  const categoryFound = await prisma.categories.findFirst({
-    where: { id: +categoryId },
-  });
-  if (!categoryFound) {
-    throw new AppError({ httpCode: HttpCode.NOT_FOUND, message: "Not Found!" });
-  }
+  await checkValidCategoryId(categoryId);
   const categoryItem = await prisma.categories.update({
     where: { id: +categoryId },
     data: { categoryName: category.categoryName },
@@ -47,13 +33,7 @@ export const updateCategory = async (
 };
 
 export const deleteCategory = async (categoryId: string) => {
-  checkValidCategoryId(categoryId);
-  const categoryFound = await prisma.categories.findFirst({
-    where: { id: +categoryId },
-  });
-  if (!categoryFound) {
-    throw new AppError({ httpCode: HttpCode.NOT_FOUND, message: "Not Found!" });
-  }
+  await checkValidCategoryId(categoryId);
   const category = await prisma.categories.delete({
     where: { id: +categoryId },
   });
@@ -64,4 +44,11 @@ const checkValidCategoryId = async (categoryId: string) => {
   if (isNaN(+categoryId)) {
     throw new AppError({ httpCode: HttpCode.NOT_FOUND, message: "Not Found!" });
   }
+  const categoryFound = await prisma.categories.findFirst({
+    where: { id: +categoryId },
+  });
+  if (!categoryFound) {
+    throw new AppError({ httpCode: HttpCode.NOT_FOUND, message: "Not Found!" });
+  }
+  return categoryFound;
 };
