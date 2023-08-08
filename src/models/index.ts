@@ -21,3 +21,7 @@ export interface Media extends MediaInput {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface PostInput {
+  
+}
