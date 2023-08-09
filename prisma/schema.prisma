@@ -67,16 +67,16 @@ model Media {
 }
 
 model Posts {
-  id         Int        @id @default(autoincrement())
-  title      String     @db.VarChar(255)
-  slug       String     @unique @db.VarChar(255)
-  content    String
-  User       User       @relation(fields: [userId], references: [id])
-  userId     String
-  category   Categories @relation(fields: [categoryId], references: [id])
-  categoryId Int
-  media      Media      @relation(fields: [thumbnail], references: [link])
-  thumbnail  String
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id            Int        @id @default(autoincrement())
+  title         String     @db.VarChar(255)
+  slug          String     @unique @db.VarChar(255)
+  content       String
+  user          User       @relation(fields: [userId], references: [id])
+  userId        String
+  category      Categories @relation(fields: [categoryId], references: [id])
+  categoryId    Int
+  thumbnail     Media      @relation(fields: [thumbnail_key], references: [link])
+  thumbnail_key String
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 }
