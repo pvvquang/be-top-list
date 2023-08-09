@@ -20,7 +20,7 @@ model User {
   updatedAt    DateTime       @updatedAt
   AccessToken  AccessToken[]
   RefreshToken RefreshToken[]
-  Post         Post[]
+  Post         Posts[]
 }
 
 model AccessToken {
@@ -52,7 +52,7 @@ model Categories {
   active       Boolean  @default(true) @db.Boolean
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  Post         Post[]
+  Post         Posts[]
 }
 
 model Media {
@@ -63,10 +63,10 @@ model Media {
   originalName String   @db.VarChar(255)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  Post         Post[]
+  Post         Posts[]
 }
 
-model Post {
+model Posts {
   id         Int        @id @default(autoincrement())
   title      String     @db.VarChar(255)
   slug       String     @unique @db.VarChar(255)
