@@ -1,7 +1,7 @@
 import prisma from "configs/db";
 import { CategoryInput } from "models";
 import { AppError, HttpCode } from "models/http-exception.model";
-import { checkCategoryExists, throw404Error } from "utils";
+import { checkCategoryExists, throwNotFoundError } from "utils";
 
 export const createCategory = async (categoryName: string) => {
   await checkCategoryExists(categoryName);
@@ -16,7 +16,7 @@ export const getCategory = async (categoryId: string) => {
 
 export const getCategories = async () => {
   const categories = await prisma.categories.findMany();
-  if (!categories) throw404Error();
+  if (!categories) throwNotFoundError();
   return categories;
 };
 

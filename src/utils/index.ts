@@ -31,9 +31,34 @@ export const checkCategoryExists = async (categoryName: string) => {
   }
 };
 
-export const throw404Error = () => {
+export const throwNotFoundError = () => {
   throw new AppError({
     httpCode: HttpCode.NOT_FOUND,
     message: "Not Found!",
   });
 };
+
+export function parseHTMLtoJSON(
+  html: string
+): { tagName: string; level: number; link: string; label: string }[] {
+  const regex =
+    /<h([1-6])\s+(?:(?!id="([^"]+)").)*id="([^"]+)">([^<]+)<\/h\1>/g;
+  let match;
+  const result: {
+    tagName: string;
+    level: number;
+    link: string;
+    label: string;
+  }[] = [];
+
+  while ((match = regex.exec(html)) !== null) {
+    const tagName = `H${match[1]}`;
+    const level = parseInt(match[1]);
+    const link = `#${match[3]}`;
+    const label = match[4];
+
+    result.push({ tagName, level, link, label });
+  }
+
+  return result;
+}

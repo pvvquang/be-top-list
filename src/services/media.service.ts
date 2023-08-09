@@ -1,6 +1,6 @@
 import prisma from "configs/db";
 import { MediaInput } from "models";
-import { throw404Error } from "utils";
+import { throwNotFoundError } from "utils";
 
 export const createMedia = async (media: MediaInput) => {
   const _media = await prisma.media.create({
@@ -11,7 +11,7 @@ export const createMedia = async (media: MediaInput) => {
 
 export const deleteMedia = async (mediaKey: string) => {
   const media = await checkMediaKey(mediaKey);
-  if (!media) throw404Error();
+  if (!media) throwNotFoundError();
   const _media = await prisma.media.delete({ where: { key: mediaKey } });
   return _media;
 };

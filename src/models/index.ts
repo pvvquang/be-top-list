@@ -1,3 +1,5 @@
+import { User } from "./auth.model";
+
 export type CategoryInput = {
   categoryName: string;
 };
@@ -28,5 +30,16 @@ export interface PostInput {
   content: string;
   userId: string;
   categoryId: number;
-  thumbnail: string;
+}
+
+export interface Post {
+  id: number;
+  title: string;
+  slug: string;
+  content: string;
+  user: User;
+  category: Category;
+  thumbnail: Media;
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -1,13 +1,14 @@
 import {
-  S3Client,
-  PutObjectCommand,
   DeleteObjectsCommand,
   GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { EXPIRES_TIME } from "constants/app.const";
 import fs from "fs";
-import { config } from "../configs/upload";
 import { AppError, HttpCode } from "models/http-exception.model";
+import { config } from "../configs/upload";
 
 export const s3 = new S3Client({
   credentials: {
@@ -76,7 +77,7 @@ export const getS3LinkUrl = async (key: string) => {
     Key: key,
   });
   const url = await getSignedUrl(s3, getOjectCommand, {
-    expiresIn: 604800,
+    expiresIn: EXPIRES_TIME,
   });
   return url;
 };

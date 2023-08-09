@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError, HttpCode } from "models/http-exception.model";
 import prisma from "configs/db";
-import { throw404Error } from "utils";
+import { throwNotFoundError } from "utils";
 import { uploadFile } from "./upload.controller";
 import { deleteFileS3 } from "services/s3.service";
 import * as mediaService from "services/media.service";
@@ -41,7 +41,7 @@ export const getMedia = async (
   checkValidMediaId(mediaId);
   try {
     const media = await prisma.media.findUnique({ where: { id: +mediaId } });
-    if (!media) throw404Error();
+    if (!media) throwNotFoundError();
     res.status(HttpCode.OK).json(media);
   } catch (e) {
     next(e);
@@ -58,7 +58,7 @@ export const deleteMedia = async (
     const deleteRes = await deleteFileS3([{ Key: mediaKey }]);
     await mediaService.deleteMedia(mediaKey);
 
-    if (!deleteRes) throw404Error();
+    if (!deleteRes) throwNotFoundError();
     res.status(HttpCode.OK).json({ message: "Media had been deleted!" });
   } catch (e) {
     next(e);
@@ -73,13 +73,13 @@ export const deleteListMedia = async (
   const { keys } = req.body;
   const listMediaKey: Array<{ Key: string }> = JSON.parse(keys);
   try {
-    if (!listMediaKey.length) return throw404Error();
+    if (!listMediaKey.length) return throwNotFoundError();
     const deleteRes = await deleteFileS3(listMediaKey);
     listMediaKey.forEach(
       async (key) => await mediaService.deleteMedia(key.Key)
     );
 
-    if (!deleteRes) throw404Error();
+    if (!deleteRes) throwNotFoundError();
     res.status(HttpCode.OK).json({ message: "Media had been deleted!" });
   } catch (e) {
     next(e);
@@ -87,5 +87,5 @@ export const deleteListMedia = async (
 };
 
 const checkValidMediaId = (mediaId: string) => {
-  if (isNaN(+mediaId)) throw404Error();
+  if (isNaN(+mediaId)) throwNotFoundError();
 };

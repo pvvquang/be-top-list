@@ -1,23 +1,25 @@
 import { NextFunction, Request, Response } from "express";
-import { CategoryInput } from "models";
+import { CategoryInput, PostInput } from "models";
 import { HttpCode } from "models/http-exception.model";
 import * as postService from "services/posts.service";
+import { parseHTMLtoJSON, throwNotFoundError } from "utils";
 
 export const createPost = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const _category: CategoryInput = req.body;
   try {
-    const category = await postService.createNewPost(_category.categoryName);
-    res.status(HttpCode.OK).json(category);
+    const newPost = await postService.createNewPost(req.body, req.upload);
+    res
+      .status(HttpCode.OK)
+      .json({ ...newPost, headers: parseHTMLtoJSON(newPost.content) });
   } catch (e) {
     next(e);
   }
 };
 
-export const getPost = async (
+export const getPostById = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -25,7 +27,26 @@ export const getPost = async (
   const { postId } = req.params;
   try {
     const post = await postService.deletePostById(postId);
-    res.status(HttpCode.OK).json(post);
+    res
+      .status(HttpCode.OK)
+      .json({ ...post, headers: parseHTMLtoJSON(post.content) });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const getPostBySlug = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { slug } = req.params;
+  try {
+    const post = await postService.getPostBySlug(slug);
+    if (!post) return throwNotFoundError();
+    res
+      .status(HttpCode.OK)
+      .json({ ...post, headers: parseHTMLtoJSON(post.content) });
   } catch (e) {
     next(e);
   }
