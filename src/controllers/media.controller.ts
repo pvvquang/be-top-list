@@ -3,6 +3,8 @@ import { AppError, HttpCode } from "models/http-exception.model";
 import prisma from "configs/db";
 import { throw404Error } from "utils";
 import { uploadFile } from "./upload.controller";
+import { deleteFileS3 } from "services/s3.service";
+import * as mediaService from "services/media.service";
 
 export const createMedia = async (
   req: Request,
@@ -51,10 +53,33 @@ export const deleteMedia = async (
   res: Response,
   next: NextFunction
 ) => {
-
+  const { mediaKey } = req.params;
   try {
-    
-    // delete db + s3
+    const deleteRes = await deleteFileS3([{ Key: mediaKey }]);
+    await mediaService.deleteMedia(mediaKey);
+
+    if (!deleteRes) throw404Error();
+    res.status(HttpCode.OK).json({ message: "Media had been deleted!" });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const deleteListMedia = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { keys } = req.body;
+  const listMediaKey: Array<{ Key: string }> = JSON.parse(keys);
+  try {
+    if (!listMediaKey.length) return throw404Error();
+    const deleteRes = await deleteFileS3(listMediaKey);
+    listMediaKey.forEach(
+      async (key) => await mediaService.deleteMedia(key.Key)
+    );
+
+    if (!deleteRes) throw404Error();
     res.status(HttpCode.OK).json({ message: "Media had been deleted!" });
   } catch (e) {
     next(e);
@@ -62,7 +87,5 @@ export const deleteMedia = async (
 };
 
 const checkValidMediaId = (mediaId: string) => {
-  if (isNaN(+mediaId)) {
-    throw new AppError({ httpCode: HttpCode.NOT_FOUND, message: "Not Found!" });
-  }
+  if (isNaN(+mediaId)) throw404Error();
 };

@@ -14,6 +14,15 @@ authRouter.post(
 );
 authRouter.get("/media/:mediaId", authentication, mediaController.getMedia);
 authRouter.get("/media", authentication, mediaController.getListMedia);
-authRouter.delete("/media", authentication, mediaController.deleteMedia);
+authRouter.delete(
+  "/media/:mediaKey",
+  authentication,
+  mediaController.deleteMedia
+);
+authRouter.delete(
+  "/media",
+  authentication,
+  mediaController.deleteListMedia
+);
 
 export default authRouter;

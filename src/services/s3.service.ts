@@ -2,6 +2,7 @@ import {
   S3Client,
   PutObjectCommand,
   DeleteObjectsCommand,
+  GetObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import fs from "fs";
@@ -29,7 +30,8 @@ export const uploadToS3 = async (fileData?: Express.Multer.File) => {
     const command = new PutObjectCommand(params);
     try {
       await s3.send(command);
-      const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+      const url = await getS3LinkUrl(mediaKey);
+
       let result = {
         success: true,
         data: {
@@ -66,4 +68,15 @@ export const deleteFileS3 = async (keys: { Key: string }[]) => {
   const command = new DeleteObjectsCommand(params);
   const data = await s3.send(command);
   return data;
+};
+
+export const getS3LinkUrl = async (key: string) => {
+  const getOjectCommand = new GetObjectCommand({
+    Bucket: config.bucket_name,
+    Key: key,
+  });
+  const url = await getSignedUrl(s3, getOjectCommand, {
+    expiresIn: 604800,
+  });
+  return url;
 };
