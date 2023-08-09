@@ -4,7 +4,7 @@ import {
   getListPost,
   getPost,
   updatePost,
-} from "controllers/post.controller";
+} from "controllers/posts.controller";
 import { Router } from "express";
 import { authentication } from "middlewares/auth.middleware";
 

@@ -23,5 +23,10 @@ export interface Media extends MediaInput {
 }
 
 export interface PostInput {
-  
+  title: string;
+  slug: string;
+  content: string;
+  userId: string;
+  categoryId: number;
+  thumbnail: string;
 }

@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { CategoryInput } from "models";
-import { RegisterInput } from "models/auth.model";
 import { HttpCode } from "models/http-exception.model";
-import * as postService from "services/post.service";
+import * as postService from "services/posts.service";
 
 export const createPost = async (
   req: Request,

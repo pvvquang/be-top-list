@@ -15,7 +15,7 @@ export const getPostById = async (postId: string) => {
 };
 
 export const getListPost = async () => {
-  const listPost = await prisma.post.findMany();
+  const listPost = await prisma.posts.findMany();
   if (!listPost) throw404Error();
   return listPost;
 };
@@ -31,7 +31,7 @@ export const updatePostById = async (post: CategoryInput, postId: string) => {
 
 export const deletePostById = async (postId: string) => {
   await checkValidPostId(postId);
-  const postItem = await prisma.post.delete({
+  const postItem = await prisma.posts.delete({
     where: { id: +postId },
   });
   return postItem;
@@ -41,7 +41,7 @@ const checkValidPostId = async (postId: string) => {
   if (isNaN(+postId)) {
     throw new AppError({ httpCode: HttpCode.NOT_FOUND, message: "Not Found!" });
   }
-  const postFound = await prisma.post.findFirst({
+  const postFound = await prisma.posts.findFirst({
     where: { id: +postId },
   });
   if (!postFound) {
