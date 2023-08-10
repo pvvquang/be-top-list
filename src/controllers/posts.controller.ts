@@ -15,7 +15,10 @@ export const createPost = async (
     const postResponse = {
       ...newPost,
       headers: parseHTMLtoJSON(newPost.content),
-      content: passImageUrlToHTMLTemplate(newPost.content, newPost.imageKeys),
+      content: await passImageUrlToHTMLTemplate(
+        newPost.content,
+        newPost.imageKeys
+      ),
     };
     res.status(HttpCode.OK).json(postResponse);
   } catch (e) {
@@ -31,11 +34,11 @@ export const getPostById = async (
 ) => {
   const { postId } = req.params;
   try {
-    const post = await postService.deletePostById(postId);
+    const post = await postService.getPostById(postId);
     const postResponse = {
       ...post,
       headers: parseHTMLtoJSON(post.content),
-      content: passImageUrlToHTMLTemplate(post.content, post.imageKeys),
+      content: await passImageUrlToHTMLTemplate(post.content, post.imageKeys),
     };
     res.status(HttpCode.OK).json(postResponse);
   } catch (e) {
@@ -55,7 +58,7 @@ export const getPostBySlug = async (
     const postResponse = {
       ...post,
       headers: parseHTMLtoJSON(post.content),
-      content: passImageUrlToHTMLTemplate(post.content, post.imageKeys),
+      content: await passImageUrlToHTMLTemplate(post.content, post.imageKeys),
     };
     res.status(HttpCode.OK).json(postResponse);
   } catch (e) {
@@ -70,10 +73,10 @@ export const getListPost = async (
 ) => {
   try {
     const listPost = await postService.getListPost();
-    const postResponse = listPost.map((post) => ({
+    const postResponse = listPost.map(async (post) => ({
       ...post,
       headers: parseHTMLtoJSON(post.content),
-      content: passImageUrlToHTMLTemplate(post.content, post.imageKeys),
+      content: await passImageUrlToHTMLTemplate(post.content, post.imageKeys),
     }));
     res.status(HttpCode.OK).json(postResponse);
   } catch (e) {

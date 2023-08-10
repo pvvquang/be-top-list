@@ -2,7 +2,10 @@ import * as postController from "controllers/posts.controller";
 import { uploadFile, uploadSingle } from "controllers/upload.controller";
 import { Router } from "express";
 import { authentication } from "middlewares/auth.middleware";
-import { checkValidPostPayload } from "middlewares/post.middleware";
+import {
+  checkValidPostPayload,
+  checkValidPostSlug,
+} from "middlewares/post.middleware";
 const multer = require("multer");
 const upload = multer();
 
@@ -13,6 +16,7 @@ authRouter.post(
   authentication,
   uploadSingle,
   checkValidPostPayload,
+  checkValidPostSlug,
   uploadFile.upload,
   postController.createPost
 );
@@ -27,6 +31,7 @@ authRouter.put(
   "/posts/:postId",
   authentication,
   checkValidPostPayload,
+  checkValidPostSlug,
   postController.updatePost
 );
 authRouter.delete("/posts/:postId", authentication, postController.deletePost);

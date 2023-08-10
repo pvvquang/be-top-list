@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError, HttpCode } from "models/http-exception.model";
+import { getPostBySlug } from "services/posts.service";
 
 export const checkValidPostPayload = (
   req: Request,
@@ -44,5 +45,18 @@ export const checkValidPostPayload = (
     });
   }
 
+  next();
+};
+
+export const checkValidPostSlug = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { slug } = req.body;
+  const postFound = await getPostBySlug(slug);
+  if (!!postFound) {
+    res.status(HttpCode.BAD_REQUEST).json({ message: "Slug already exists!" });
+  }
   next();
 };

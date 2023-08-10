@@ -49,10 +49,10 @@ export const createNewPost = async (
       message: "Fail to upload file",
     });
   }
+  const { userId, categoryId, ...restPostInput } = postInput;
   const newPost = await prisma.posts.create({
     data: {
-      ...postInput,
-      thumbnailKey: media.link,
+      ...restPostInput,
       thumbnail: {
         connect: {
           link: media.link,
@@ -70,8 +70,8 @@ export const createNewPost = async (
       } as any,
     },
     select: postSelectedKey,
-  });
-  return newPost;
+  } as any);
+  return newPost as any;
 };
 
 export const getPostById = async (postId: string): Promise<Post> => {

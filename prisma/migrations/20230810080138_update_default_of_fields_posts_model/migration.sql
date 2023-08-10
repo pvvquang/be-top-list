@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Posts" ALTER COLUMN "author" SET DEFAULT '',
+ALTER COLUMN "isPublish" SET DEFAULT true,
+ALTER COLUMN "meta" SET DEFAULT '',
+ALTER COLUMN "trending" SET DEFAULT false,
+ALTER COLUMN "type" SET DEFAULT '';
