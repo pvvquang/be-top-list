@@ -78,12 +78,12 @@ model Posts {
   thumbnail    Media      @relation(fields: [thumbnailKey], references: [link])
   thumbnailKey String
   imageKeys    String[]
-  type         String?    @default("")
-  trending     Boolean?   @default(false)
-  author       String?    @default("")
-  meta         String?    @default("")
-  isPublish    Boolean?   @default(true)
-  publishedAt  DateTime?  @default(now())
+  type         String     @db.VarChar(255)
+  trending     Boolean    @db.Boolean
+  author       String     @db.VarChar(255)
+  meta         String     @db.VarChar(255)
+  isPublish    Boolean    @db.Boolean
+  publishedAt  DateTime   @default(now())
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
