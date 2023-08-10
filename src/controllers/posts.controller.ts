@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { CategoryInput, PostInput } from "models";
 import { HttpCode } from "models/http-exception.model";
+import * as mediaService from "services/media.service";
 import * as postService from "services/posts.service";
 import { parseHTMLtoJSON, throwNotFoundError } from "utils";
+import { passImageUrlToHTMLTemplate } from "utils/handlebars";
 
 export const createPost = async (
   req: Request,
@@ -11,10 +12,14 @@ export const createPost = async (
 ) => {
   try {
     const newPost = await postService.createNewPost(req.body, req.upload);
-    res
-      .status(HttpCode.OK)
-      .json({ ...newPost, headers: parseHTMLtoJSON(newPost.content) });
+    const postResponse = {
+      ...newPost,
+      headers: parseHTMLtoJSON(newPost.content),
+      content: passImageUrlToHTMLTemplate(newPost.content, newPost.imageKeys),
+    };
+    res.status(HttpCode.OK).json(postResponse);
   } catch (e) {
+    mediaService.deleteMedia(req.upload.key);
     next(e);
   }
 };
@@ -27,9 +32,12 @@ export const getPostById = async (
   const { postId } = req.params;
   try {
     const post = await postService.deletePostById(postId);
-    res
-      .status(HttpCode.OK)
-      .json({ ...post, headers: parseHTMLtoJSON(post.content) });
+    const postResponse = {
+      ...post,
+      headers: parseHTMLtoJSON(post.content),
+      content: passImageUrlToHTMLTemplate(post.content, post.imageKeys),
+    };
+    res.status(HttpCode.OK).json(postResponse);
   } catch (e) {
     next(e);
   }
@@ -44,9 +52,12 @@ export const getPostBySlug = async (
   try {
     const post = await postService.getPostBySlug(slug);
     if (!post) return throwNotFoundError();
-    res
-      .status(HttpCode.OK)
-      .json({ ...post, headers: parseHTMLtoJSON(post.content) });
+    const postResponse = {
+      ...post,
+      headers: parseHTMLtoJSON(post.content),
+      content: passImageUrlToHTMLTemplate(post.content, post.imageKeys),
+    };
+    res.status(HttpCode.OK).json(postResponse);
   } catch (e) {
     next(e);
   }
@@ -59,7 +70,12 @@ export const getListPost = async (
 ) => {
   try {
     const listPost = await postService.getListPost();
-    res.status(HttpCode.OK).json(listPost);
+    const postResponse = listPost.map((post) => ({
+      ...post,
+      headers: parseHTMLtoJSON(post.content),
+      content: passImageUrlToHTMLTemplate(post.content, post.imageKeys),
+    }));
+    res.status(HttpCode.OK).json(postResponse);
   } catch (e) {
     next(e);
   }

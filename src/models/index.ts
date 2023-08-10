@@ -20,8 +20,8 @@ export interface MediaInput {
 
 export interface Media extends MediaInput {
   id: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface PostInput {
@@ -30,6 +30,13 @@ export interface PostInput {
   content: string;
   userId: string;
   categoryId: number;
+  imageKeys: string[];
+  type: string;
+  trending: boolean;
+  author: string;
+  meta: string;
+  isPublish: boolean;
+  publishedAt: string;
 }
 
 export interface Post {
@@ -37,9 +44,29 @@ export interface Post {
   title: string;
   slug: string;
   content: string;
-  user: User;
-  category: Category;
-  thumbnail: Media;
-  createdAt: Date;
-  updatedAt: Date;
+  user: Partial<User>;
+  category: Partial<Category>;
+  thumbnail: Partial<Media>;
+  userId?: string;
+  categoryId?: number;
+  imageKeys: string[];
+  type: string;
+  trending: boolean;
+  author: string;
+  meta: string;
+  isPublish: boolean;
+  publishedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface PostResponse extends Post {
+  headers: PostHeader[];
+}
+
+export interface PostHeader {
+  tagName: string;
+  level: number;
+  link: string;
+  label: string;
 }

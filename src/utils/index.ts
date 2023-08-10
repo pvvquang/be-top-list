@@ -1,3 +1,4 @@
+import { PostHeader } from "models";
 import { AppError, HttpCode } from "models/http-exception.model";
 
 export function capitalizeFirstLetter(text: string) {
@@ -38,18 +39,11 @@ export const throwNotFoundError = () => {
   });
 };
 
-export function parseHTMLtoJSON(
-  html: string
-): { tagName: string; level: number; link: string; label: string }[] {
+export function parseHTMLtoJSON(html: string): PostHeader[] {
   const regex =
     /<h([1-6])\s+(?:(?!id="([^"]+)").)*id="([^"]+)">([^<]+)<\/h\1>/g;
   let match;
-  const result: {
-    tagName: string;
-    level: number;
-    link: string;
-    label: string;
-  }[] = [];
+  const result: PostHeader[] = [];
 
   while ((match = regex.exec(html)) !== null) {
     const tagName = `H${match[1]}`;

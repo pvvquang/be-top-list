@@ -55,10 +55,7 @@ export const deleteMedia = async (
 ) => {
   const { mediaKey } = req.params;
   try {
-    const deleteRes = await deleteFileS3([{ Key: mediaKey }]);
     await mediaService.deleteMedia(mediaKey);
-
-    if (!deleteRes) throwNotFoundError();
     res.status(HttpCode.OK).json({ message: "Media had been deleted!" });
   } catch (e) {
     next(e);

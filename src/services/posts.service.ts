@@ -7,6 +7,14 @@ const postSelectedKey = {
   id: true,
   title: true,
   content: true,
+  slug: true,
+  type: true,
+  imageKeys: true,
+  trending: true,
+  author: true,
+  meta: true,
+  isPublish: true,
+  publishedAt: true,
   thumbnail: {
     select: {
       id: true,
@@ -31,7 +39,10 @@ const postSelectedKey = {
   },
 };
 
-export const createNewPost = async (postInput: PostInput, media: Media) => {
+export const createNewPost = async (
+  postInput: PostInput,
+  media: Media
+): Promise<Post> => {
   if (!media.key) {
     throw new AppError({
       httpCode: HttpCode.BAD_REQUEST,
@@ -41,7 +52,7 @@ export const createNewPost = async (postInput: PostInput, media: Media) => {
   const newPost = await prisma.posts.create({
     data: {
       ...postInput,
-      thumbnail_key: media.link,
+      thumbnailKey: media.link,
       thumbnail: {
         connect: {
           link: media.link,
@@ -60,16 +71,15 @@ export const createNewPost = async (postInput: PostInput, media: Media) => {
     },
     select: postSelectedKey,
   });
-
   return newPost;
 };
 
-export const getPostById = async (postId: string) => {
+export const getPostById = async (postId: string): Promise<Post> => {
   const postItem = await checkValidPostId(postId);
   return postItem;
 };
 
-export const getPostBySlug = async (slug: string) => {
+export const getPostBySlug = async (slug: string): Promise<Post | null> => {
   const postItem = await prisma.posts.findUnique({
     where: { slug },
     select: postSelectedKey,
@@ -77,7 +87,7 @@ export const getPostBySlug = async (slug: string) => {
   return postItem;
 };
 
-export const getListPost = async () => {
+export const getListPost = async (): Promise<Post[]> => {
   const listPost = await prisma.posts.findMany({ select: postSelectedKey });
   return listPost;
 };
@@ -100,14 +110,14 @@ export const deletePostById = async (postId: string) => {
   return postItem;
 };
 
-const checkValidPostId = async (postId: string) => {
+const checkValidPostId = async (postId: string): Promise<Post> => {
   if (isNaN(+postId)) {
     throw new AppError({
       httpCode: HttpCode.NOT_FOUND,
       message: "Post Not Found!",
     });
   }
-  const postFound = await prisma.posts.findFirst({
+  const postFound = await prisma.posts.findUnique({
     where: { id: +postId },
     select: postSelectedKey,
   });
