@@ -29,8 +29,8 @@ export const hashPassword = (password: string) => {
   return hash;
 };
 
-export const comparePassword = (pass: string, hash: string) => {
-  return bcrypt.compareSync(pass, hash);
+export const comparePassword = async (pass: string, hash: string) => {
+  return await bcrypt.compare(pass, hash);
 };
 
 export const validateEmail = (email: string) => {
