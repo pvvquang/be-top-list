@@ -32,7 +32,10 @@ export const login = async (
         secure: true,
       })
       .status(HttpCode.OK)
-      .json({ message: "Logged in successfully 😊 👌" });
+      .json({
+        message: "Logged in successfully 😊 👌",
+        accessToken: accessToken.token,
+      });
   } catch (e) {
     next(e);
   }
