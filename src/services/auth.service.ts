@@ -1,15 +1,19 @@
+import prisma from "configs/db";
+import { AppConstant } from "constants/index";
+import jwt from "jsonwebtoken";
+import { AppError, HttpCode } from "models/http-exception.model";
 import { handleEmptyKeyObject } from "utils";
 import {
   checkUserExists,
   comparePassword,
   generateAccessToken,
+  generateRefreshToken,
+  getAccessTokenActive,
+  handleCreateNewAccessToken,
   hashPassword,
   validateEmail,
 } from "utils/auth";
 import { LoginInput, RegisterInput } from "../models/auth.model";
-import prisma from "configs/db";
-import { AppError, HttpCode } from "models/http-exception.model";
-import { AppConstant } from "constants/index";
 
 export const createUser = async (user: RegisterInput) => {
   handleEmptyKeyObject(user);
@@ -50,27 +54,21 @@ export const login = async (user: LoginInput) => {
     });
   }
 
-  const oldAccessToken = await prisma.accessToken.findFirst({
-    where: {
-      userId: _user.id,
-      active: true,
-    },
-  });
-  const newToken = generateAccessToken(_user.id);
-  const newAccessToken = await prisma.accessToken.create({
+  const newAccessToken = await handleCreateNewAccessToken(_user.id);
+
+  const refreshToken = generateRefreshToken(_user.id);
+  const newRefreshToken = await prisma.refreshToken.create({
     data: {
-      token: newToken,
+      token: refreshToken,
       userId: _user.id,
-      expires: new Date(Date.now() + AppConstant.EXPIRES_TIME * 1000),
+      expires: new Date(
+        Date.now() + AppConstant.REFRESH_TOKEN_EXPIRES_TIME * 1000
+      ),
+      replacedByToken: "",
     },
   });
-  if (oldAccessToken && newAccessToken) {
-    await prisma.accessToken.update({
-      where: { id: oldAccessToken.id },
-      data: { active: false },
-    });
-  }
-  return newAccessToken;
+
+  return { token: newAccessToken.token, refreshToken: newRefreshToken.token };
 };
 
 export const getSelfInfo = async (userId: string) => {
@@ -82,4 +80,19 @@ export const getSelfInfo = async (userId: string) => {
     });
   }
   return user;
+};
+
+export const refreshToken = async (token: string) => {
+  let decoded: any = null;
+  try {
+    decoded = jwt.verify(token, AppConstant.JWT_REFRESH_KEY as string);
+  } catch (err) {
+    throw new AppError({
+      httpCode: HttpCode.UNAUTHORIZED,
+      message: "Refresh key is not valid!",
+    });
+  }
+
+  const newAccessToken = await handleCreateNewAccessToken(decoded.data);
+  return newAccessToken.token;
 };

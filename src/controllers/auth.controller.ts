@@ -25,16 +25,17 @@ export const login = async (
   const user: LoginInput = req.body;
 
   try {
-    const accessToken = await authService.login(user);
+    const { token, refreshToken } = await authService.login(user);
     res
-      .cookie("accessToken", accessToken.token, {
+      .cookie("accessToken", token, {
         httpOnly: true,
         secure: true,
       })
       .status(HttpCode.OK)
       .json({
         message: "Logged in successfully 😊 👌",
-        accessToken: accessToken.token,
+        accessToken: token,
+        refreshToken,
       });
   } catch (e) {
     next(e);
@@ -50,6 +51,26 @@ export const getSelfInfo = async (
     const user: User = await authService.getSelfInfo(req.user.data);
     const { password, ...rest } = user;
     res.status(HttpCode.OK).json({ ...rest });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const refreshToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { token } = req.params;
+  try {
+    const newAccessToken = await authService.refreshToken(token);
+    res
+      .cookie("accessToken", token, {
+        httpOnly: true,
+        secure: true,
+      })
+      .status(HttpCode.OK)
+      .json({ accessToken: newAccessToken });
   } catch (e) {
     next(e);
   }

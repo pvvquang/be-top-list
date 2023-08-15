@@ -6,7 +6,6 @@ import { RegisterInput } from "models/auth.model";
 import { AppError, HttpCode } from "models/http-exception.model";
 
 const saltRounds = 10;
-const secretKey = process.env.JWT_SECRET_KEY as string;
 
 export const checkUserExists = async (user: RegisterInput) => {
   const { email } = user;
@@ -39,8 +38,14 @@ export const validateEmail = (email: string) => {
 };
 
 export function generateAccessToken(userId: string) {
-  return jwt.sign({ data: userId }, secretKey, {
-    expiresIn: AppConstant.EXPIRES_TIME,
+  return jwt.sign({ data: userId }, AppConstant.JWT_SECRET_KEY as string, {
+    expiresIn: AppConstant.ACCESS_TOKEN_EXPIRES_TIME,
+  });
+}
+
+export function generateRefreshToken(userId: string) {
+  return jwt.sign({ data: userId }, AppConstant.JWT_REFRESH_KEY as string, {
+    expiresIn: AppConstant.REFRESH_TOKEN_EXPIRES_TIME,
   });
 }
 
@@ -51,4 +56,34 @@ export const checkTokenExists = async (userId: string) => {
   if (accessToken) {
   } else {
   }
+};
+
+export const getAccessTokenActive = async (userId: string) => {
+  return await prisma.accessToken.findFirst({
+    where: { userId, active: true },
+  });
+};
+
+export const handleCreateNewAccessToken = async (userId: string) => {
+  const newAccessToken = generateAccessToken(userId);
+  const oldAccessTokenItem = await getAccessTokenActive(userId);
+
+  const newAccessTokenItem = await prisma.accessToken.create({
+    data: {
+      token: newAccessToken,
+      userId: userId,
+      expires: new Date(
+        Date.now() + AppConstant.ACCESS_TOKEN_EXPIRES_TIME * 1000
+      ),
+    },
+  });
+
+  if (oldAccessTokenItem && newAccessTokenItem) {
+    await prisma.accessToken.update({
+      where: { id: oldAccessTokenItem.id },
+      data: { active: false },
+    });
+  }
+
+  return newAccessTokenItem;
 };
