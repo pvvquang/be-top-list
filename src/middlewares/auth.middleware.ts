@@ -1,3 +1,4 @@
+import { JWT_SECRET_KEY } from "constants/app.const";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
@@ -21,7 +22,7 @@ export const authentication = async (
   }
 
   try {
-    const user = jwt.verify(token, process.env.JWT_SECRET_KEY || "superSecret");
+    const user = jwt.verify(token, JWT_SECRET_KEY as string);
     req.user = user;
     next();
   } catch (err) {

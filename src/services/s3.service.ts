@@ -5,7 +5,7 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { EXPIRES_TIME } from "constants/app.const";
+import { ACCESS_TOKEN_EXPIRES_TIME } from "constants/app.const";
 import fs from "fs";
 import { AppError, HttpCode } from "models/http-exception.model";
 import { config } from "../configs/upload";
@@ -77,7 +77,7 @@ export const getS3LinkUrl = async (key: string) => {
     Key: key,
   });
   const url = await getSignedUrl(s3, getOjectCommand, {
-    expiresIn: EXPIRES_TIME,
+    expiresIn: ACCESS_TOKEN_EXPIRES_TIME,
   });
   return url;
 };
