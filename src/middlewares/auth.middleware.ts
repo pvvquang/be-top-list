@@ -1,6 +1,7 @@
 import { JWT_SECRET_KEY } from "constants/app.const";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { HttpCode } from "models/http-exception.model";
 
 export const authentication = async (
   req: Request,
@@ -10,14 +11,14 @@ export const authentication = async (
   const bearer = req.headers.authorization;
 
   if (!bearer) {
-    res.status(401).json({ message: "Not Authorized!" });
+    res.status(HttpCode.UNAUTHORIZED).json({ message: "Not Authorized!" });
     return;
   }
 
   const [, token] = bearer.split(" ");
 
   if (!token) {
-    res.status(401).json({ message: "Token is not valid!" });
+    res.status(HttpCode.UNAUTHORIZED).json({ message: "Token is not valid!" });
     return;
   }
 
@@ -26,7 +27,7 @@ export const authentication = async (
     req.user = user;
     next();
   } catch (err) {
-    res.status(401).json({ message: "Token is not valid!" });
+    res.status(HttpCode.UNAUTHORIZED).json({ message: "Token is not valid!" });
     return;
   }
 };
