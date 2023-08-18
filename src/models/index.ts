@@ -1,5 +1,10 @@
 import { User } from "./auth.model";
 
+export type Pagination = {
+  page: number;
+  pageSize: number;
+};
+
 export type CategoryInput = {
   categoryName: string;
 };

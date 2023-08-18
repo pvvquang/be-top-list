@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { CategoryInput } from "models";
-import { RegisterInput } from "models/auth.model";
 import { HttpCode } from "models/http-exception.model";
 import * as categoryService from "services/category.service";
 
@@ -39,8 +38,9 @@ export const getCategories = async (
   res: Response,
   next: NextFunction
 ) => {
+  const pagination: any = req.params;
   try {
-    const categories = await categoryService.getCategories();
+    const categories = await categoryService.getCategories(pagination);
     res.status(HttpCode.OK).json(categories);
   } catch (e) {
     next(e);

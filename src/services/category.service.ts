@@ -1,5 +1,6 @@
 import prisma from "configs/db";
-import { CategoryInput } from "models";
+import { PAGINATION } from "constants/app.const";
+import { CategoryInput, Pagination } from "models";
 import { AppError, HttpCode } from "models/http-exception.model";
 import { checkCategoryExists, throwNotFoundError } from "utils";
 
@@ -22,13 +23,23 @@ export const getCategory = async (categoryId: string) => {
   return category;
 };
 
-export const getCategories = async () => {
+export const getCategories = async (pagination: Pagination | undefined) => {
   const categories = await prisma.categories.findMany({
     where: { active: true },
     select: categorySelect,
   });
   if (!categories) throwNotFoundError();
-  return categories;
+
+  const page = pagination?.page || PAGINATION.PAGE;
+  const pageSize = pagination?.pageSize || PAGINATION.PAGE_SIZE;
+  const result = {
+    categories: categories.slice((page - 1) * pageSize, page * pageSize),
+    metadata: {
+      totalItems: categories.length,
+      totalPages: Math.ceil(categories.length / pageSize),
+    },
+  };
+  return result;
 };
 
 export const updateCategory = async (
