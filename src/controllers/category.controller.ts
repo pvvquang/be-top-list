@@ -38,7 +38,7 @@ export const getCategories = async (
   res: Response,
   next: NextFunction
 ) => {
-  const pagination: any = req.params;
+  const pagination: any = req.query;
   try {
     const categories = await categoryService.getCategories(pagination);
     res.status(HttpCode.OK).json(categories);

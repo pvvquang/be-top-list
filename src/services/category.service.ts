@@ -27,6 +27,7 @@ export const getCategories = async (pagination: Pagination | undefined) => {
   const categories = await prisma.categories.findMany({
     where: { active: true },
     select: categorySelect,
+    orderBy: { updatedAt: "desc" },
   });
   if (!categories) throwNotFoundError();
 
