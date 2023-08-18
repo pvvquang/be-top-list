@@ -33,7 +33,7 @@ export const getCategories = async (pagination: Pagination | undefined) => {
   const page = pagination?.page || PAGINATION.PAGE;
   const pageSize = pagination?.pageSize || PAGINATION.PAGE_SIZE;
   const result = {
-    categories: categories.slice((page - 1) * pageSize, page * pageSize),
+    data: categories.slice((page - 1) * pageSize, page * pageSize),
     metadata: {
       totalItems: categories.length,
       totalPages: Math.ceil(categories.length / pageSize),
