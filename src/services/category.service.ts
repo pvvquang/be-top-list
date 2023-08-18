@@ -15,7 +15,9 @@ export const getCategory = async (categoryId: string) => {
 };
 
 export const getCategories = async () => {
-  const categories = await prisma.categories.findMany();
+  const categories = await prisma.categories.findMany({
+    where: { active: true },
+  });
   if (!categories) throwNotFoundError();
   return categories;
 };
@@ -34,8 +36,9 @@ export const updateCategory = async (
 
 export const deleteCategory = async (categoryId: string) => {
   await checkValidCategoryId(categoryId);
-  const category = await prisma.categories.delete({
+  const category = await prisma.categories.update({
     where: { id: +categoryId },
+    data: { active: false },
   });
   return category;
 };
