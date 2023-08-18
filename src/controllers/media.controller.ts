@@ -1,10 +1,9 @@
-import { NextFunction, Request, Response } from "express";
-import { AppError, HttpCode } from "models/http-exception.model";
 import prisma from "configs/db";
-import { throwNotFoundError } from "utils";
-import { uploadFile } from "./upload.controller";
-import { deleteFileS3 } from "services/s3.service";
+import { NextFunction, Request, Response } from "express";
+import { HttpCode } from "models/http-exception.model";
 import * as mediaService from "services/media.service";
+import { deleteFileS3, getS3LinkUrl } from "services/s3.service";
+import { throwNotFoundError } from "utils";
 
 export const createMedia = async (
   req: Request,
@@ -26,7 +25,13 @@ export const getListMedia = async (
 ) => {
   try {
     const listMedia = await prisma.media.findMany();
-    res.status(HttpCode.OK).json(listMedia);
+    const _listMedia = await Promise.all(
+      listMedia.map(async (media) => ({
+        ...media,
+        link: await getS3LinkUrl(media.key),
+      }))
+    );
+    res.status(HttpCode.OK).json(_listMedia);
   } catch (e) {
     next(e);
   }
@@ -41,8 +46,10 @@ export const getMedia = async (
   checkValidMediaId(mediaId);
   try {
     const media = await prisma.media.findUnique({ where: { id: +mediaId } });
-    if (!media) throwNotFoundError();
-    res.status(HttpCode.OK).json(media);
+    if (!media) return throwNotFoundError();
+    res
+      .status(HttpCode.OK)
+      .json({ ...media, link: await getS3LinkUrl(media.key) });
   } catch (e) {
     next(e);
   }
