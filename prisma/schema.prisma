@@ -61,6 +61,7 @@ model Media {
   type         String   @db.VarChar(50)
   link         String   @unique
   originalName String   @db.VarChar(255)
+  active       Boolean  @default(true) @db.Boolean
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   Post         Posts[]
@@ -84,6 +85,7 @@ model Posts {
   meta         String     @default("") @db.VarChar(255)
   isPublish    Boolean    @default(true)
   publishedAt  DateTime   @default(now())
+  active       Boolean    @default(true) @db.Boolean
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
