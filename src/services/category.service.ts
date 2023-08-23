@@ -1,6 +1,6 @@
 import prisma from "configs/db";
 import { PAGINATION } from "constants/app.const";
-import { CategoryInput, Pagination } from "models";
+import { Category, CategoryInput, Pagination, ResponseList } from "models";
 import { AppError, HttpCode } from "models/http-exception.model";
 import { checkCategoryExists, throwNotFoundError } from "utils";
 
@@ -23,7 +23,9 @@ export const getCategory = async (categoryId: string) => {
   return category;
 };
 
-export const getCategories = async (pagination: Pagination | undefined) => {
+export const getCategories = async (
+  pagination: Pagination | undefined
+): Promise<ResponseList<Partial<Category>>> => {
   const categories = await prisma.categories.findMany({
     where: { active: true },
     select: categorySelect,
@@ -31,15 +33,24 @@ export const getCategories = async (pagination: Pagination | undefined) => {
   });
   if (!categories) throwNotFoundError();
 
-  const page = pagination?.page || PAGINATION.PAGE;
-  const pageSize = pagination?.pageSize || PAGINATION.PAGE_SIZE;
   const result = {
-    data: categories.slice((page - 1) * pageSize, page * pageSize),
+    data: categories,
     metadata: {
       totalItems: categories.length,
-      totalPages: Math.ceil(categories.length / pageSize),
+      totalPages: PAGINATION.PAGE,
     },
   };
+
+  if (pagination?.page || pagination?.pageSize) {
+    const page = pagination?.page || PAGINATION.PAGE;
+    const pageSize = pagination?.pageSize || PAGINATION.PAGE_SIZE;
+    result.data = categories.slice((page - 1) * pageSize, page * pageSize);
+    result.metadata = {
+      totalItems: categories.length,
+      totalPages: Math.ceil(categories.length / pageSize),
+    };
+  }
+
   return result;
 };
 

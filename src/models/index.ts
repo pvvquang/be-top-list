@@ -75,3 +75,11 @@ export interface PostHeader {
   link: string;
   label: string;
 }
+
+export interface ResponseList<T> {
+  data: Array<T>;
+  metadata: {
+    totalItems: number;
+    totalPages: number;
+  };
+}

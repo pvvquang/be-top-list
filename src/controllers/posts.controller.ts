@@ -71,14 +71,17 @@ export const getListPost = async (
   res: Response,
   next: NextFunction
 ) => {
+  const pagination: any = req.query;
   try {
-    const listPost = await postService.getListPost();
-    const postResponse = listPost.map(async (post) => ({
-      ...post,
-      headers: parseHTMLtoJSON(post.content),
-      content: await passImageUrlToHTMLTemplate(post.content, post.imageKeys),
-    }));
-    res.status(HttpCode.OK).json(postResponse);
+    const listPost = await postService.getListPost(pagination);
+    listPost.data = await Promise.all(
+      listPost.data.map(async (post) => ({
+        ...post,
+        headers: parseHTMLtoJSON(post.content),
+        content: await passImageUrlToHTMLTemplate(post.content, post.imageKeys),
+      }))
+    );
+    res.status(HttpCode.OK).json(listPost);
   } catch (e) {
     next(e);
   }
