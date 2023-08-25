@@ -1,4 +1,7 @@
 {
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
   "compilerOptions": {
     "target": "es5",
     "lib": ["es6"],
@@ -18,10 +21,14 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "*": ["node_modules", "src/*"],
-      "@/*": ["./src/*"]
+      "*": ["node_modules", "src/*"]
     },
-    "plugins": [{ "transform": "typescript-transform-paths", "exclude": ["**/node_modules/**"] }],
+    "plugins": [
+      {
+        "transform": "typescript-transform-paths",
+        "exclude": ["**/node_modules/**"]
+      }
+    ],
     "typeRoots": ["./node_module/@types", "./src/types"]
   },
   "exclude": ["node_modules"],

@@ -1,4 +1,4 @@
-export enum HttpCode {
+export const enum HttpCode {
   OK = 200,
   NO_CONTENT = 204,
   BAD_REQUEST = 400,

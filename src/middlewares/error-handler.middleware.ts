@@ -13,12 +13,18 @@ class ErrorHandler {
     response.status(error.httpCode).json({ message: error.message });
   }
 
-  private handleCriticalError(error: Error | AppError, response?: Response): void {
+  private handleCriticalError(
+    error: Error | AppError,
+    response?: Response
+  ): void {
     if (response) {
-      response.status(HttpCode.INTERNAL_SERVER_ERROR).json({ message: "Internal server error" });
+      response
+        .status(HttpCode.INTERNAL_SERVER_ERROR)
+        .json({ message: "Internal server error" });
     }
 
     console.log("Application encountered a critical error. Exiting");
+    console.log("---------error: " + error + "  ---------------------");
     // process.exit(1);
   }
 

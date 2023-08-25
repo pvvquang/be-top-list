@@ -3,8 +3,10 @@ import cors from "cors";
 import express, { Express, NextFunction, Request, Response } from "express";
 import { errorHandler } from "./middlewares/error-handler.middleware";
 import routes from "./routes/routes";
+import * as dotenv from "dotenv";
 
 const app: Express = express();
+dotenv.config();
 
 app.use(
   cors({
