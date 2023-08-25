@@ -33,6 +33,7 @@ export const getCategory = async (
   }
 };
 
+
 export const getCategories = async (
   req: Request,
   res: Response,
