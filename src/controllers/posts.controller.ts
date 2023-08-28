@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { HttpCode } from "models/http-exception.model";
 import * as mediaService from "services/media.service";
 import * as postService from "services/posts.service";
+import { getS3LinkUrl } from "services/s3.service";
 import { parseHTMLtoJSON, throwNotFoundError } from "utils";
 import { passImageUrlToHTMLTemplate } from "utils/handlebars";
 
@@ -39,6 +40,10 @@ export const getPostById = async (
       ...post,
       headers: parseHTMLtoJSON(post.content),
       content: await passImageUrlToHTMLTemplate(post.content, post.imageKeys),
+      thumbnail: {
+        ...post.thumbnail,
+        link: await getS3LinkUrl(post.thumbnail.key || ""),
+      },
     };
     res.status(HttpCode.OK).json(postResponse);
   } catch (e) {
@@ -59,6 +64,10 @@ export const getPostBySlug = async (
       ...post,
       headers: parseHTMLtoJSON(post.content),
       content: await passImageUrlToHTMLTemplate(post.content, post.imageKeys),
+      thumbnail: {
+        ...post.thumbnail,
+        link: await getS3LinkUrl(post.thumbnail.key || ""),
+      },
     };
     res.status(HttpCode.OK).json(postResponse);
   } catch (e) {
@@ -79,6 +88,10 @@ export const getListPost = async (
         ...post,
         headers: parseHTMLtoJSON(post.content),
         content: await passImageUrlToHTMLTemplate(post.content, post.imageKeys),
+        thumbnail: {
+          ...post.thumbnail,
+          link: await getS3LinkUrl(post.thumbnail.key || ""),
+        },
       }))
     );
     res.status(HttpCode.OK).json(listPost);

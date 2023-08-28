@@ -50,7 +50,7 @@ export interface Post {
   slug: string;
   content: string;
   user: Partial<User>;
-  category: Partial<Category>;
+  category: Partial<Category | null>;
   thumbnail: Partial<Media>;
   userId?: string;
   categoryId?: number;
