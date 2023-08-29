@@ -92,7 +92,20 @@ export const refreshToken = async (token: string) => {
       message: "Refresh key is not valid!",
     });
   }
+  await checkUserExistByToken(decoded.data);
 
   const newAccessToken = await handleCreateNewAccessToken(decoded.data);
   return newAccessToken.token;
+};
+
+export const checkUserExistByToken = async (userId: string) => {
+  const userInfo = await prisma?.user.findUnique({
+    where: { id: userId },
+  });
+  if (!userInfo) {
+    throw new AppError({
+      httpCode: HttpCode.UNAUTHORIZED,
+      message: "Token is not valid!",
+    });
+  }
 };

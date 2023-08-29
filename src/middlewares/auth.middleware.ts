@@ -2,6 +2,7 @@ import { JWT_SECRET_KEY } from "constants/app.const";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { HttpCode } from "models/http-exception.model";
+import { checkUserExistByToken } from "services/auth.service";
 
 export const authentication = async (
   req: Request,
@@ -23,8 +24,9 @@ export const authentication = async (
   }
 
   try {
-    const user = jwt.verify(token, JWT_SECRET_KEY as string);
-    req.user = user;
+    const decoded: any = jwt.verify(token, JWT_SECRET_KEY as string);
+    await checkUserExistByToken(decoded.data);
+    req.user = decoded;
     next();
   } catch (err) {
     res.status(HttpCode.UNAUTHORIZED).json({ message: "Token is not valid!" });
