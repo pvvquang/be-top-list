@@ -6,12 +6,13 @@ import routes from "./routes/routes";
 import * as dotenv from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
+import { accessLogStream } from "helpers/logEvents";
 
 const app: Express = express();
 dotenv.config();
 
 app.use(helmet());
-app.use(morgan("common"));
+app.use(morgan("combined", { stream: accessLogStream }));
 app.use(
   cors({
     credentials: true,
