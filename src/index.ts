@@ -4,10 +4,14 @@ import express, { Express, NextFunction, Request, Response } from "express";
 import { errorHandler } from "./middlewares/error-handler.middleware";
 import routes from "./routes/routes";
 import * as dotenv from "dotenv";
+import morgan from "morgan";
+import helmet from "helmet";
 
 const app: Express = express();
 dotenv.config();
 
+app.use(helmet());
+app.use(morgan("common"));
 app.use(
   cors({
     credentials: true,
