@@ -76,7 +76,7 @@ model Posts {
   userId       String
   category     Categories? @relation(fields: [categoryId], references: [id], onUpdate: Cascade, onDelete: SetNull)
   categoryId   Int?
-  thumbnail    Media       @relation(fields: [thumbnailKey], references: [link], onUpdate: Cascade, onDelete: SetDefault)
+  thumbnail    Media       @relation(fields: [thumbnailKey], references: [key], onUpdate: Cascade, onDelete: SetDefault)
   thumbnailKey String      @default("")
   imageKeys    String[]
   type         String      @default("") @db.VarChar(255)

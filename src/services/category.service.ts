@@ -2,7 +2,7 @@ import prisma from "configs/db";
 import { PAGINATION } from "constants/app.const";
 import { Category, CategoryInput, Pagination, ResponseList } from "models";
 import { AppError, HttpCode } from "models/http-exception.model";
-import { checkCategoryExists, throwNotFoundError } from "utils";
+import { throwNotFoundError } from "utils";
 
 const categorySelect = {
   id: true,
@@ -10,7 +10,6 @@ const categorySelect = {
 };
 
 export const createCategory = async (categoryName: string) => {
-  await checkCategoryExists(categoryName);
   const category = await prisma.categories.create({
     data: { categoryName },
     select: categorySelect,
